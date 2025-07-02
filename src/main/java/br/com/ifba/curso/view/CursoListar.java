@@ -192,6 +192,11 @@ public class CursoListar extends javax.swing.JFrame {
         getContentPane().add(btnExcluir, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 390, 120, 40));
 
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, 120, 40));
 
         pack();
@@ -203,7 +208,46 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         // TODO add your handling code here:
+        // Pega o índice da linha que o usuário selecionou na tabela
+    int linhaSelecionada = tblCursos.getSelectedRow();
+
+    // Verifica se alguma linha foi realmente selecionada. Se não, exibe um aviso.
+    if (linhaSelecionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, selecione uma linha para excluir.", "Nenhuma linha selecionada", JOptionPane.WARNING_MESSAGE);
+        return; // Encerra a execução do método
+    }
+
+    // Pega o nome do curso (que está na primeira coluna, índice 0) para usar na mensagem
+    String nomeCurso = tblCursos.getValueAt(linhaSelecionada, 0).toString();
+    
+    // Cria e exibe a caixa de diálogo de confirmação
+    int resposta = JOptionPane.showConfirmDialog(
+            this, // Componente pai (a própria janela)
+            "Deseja realmente excluir o curso '" + nomeCurso + "'?", // A mensagem da pergunta
+            "Confirmar Exclusão", // O título da janela de diálogo
+            JOptionPane.YES_NO_OPTION, // Define os botões para "Sim" e "Não"
+            JOptionPane.WARNING_MESSAGE // Adiciona um ícone de aviso
+    );
+
+    // Verifica se o usuário clicou no botão "Sim" (YES_OPTION)
+    if (resposta == JOptionPane.YES_OPTION) {
+        // Pega o modelo da tabela para que possamos remover a linha
+        DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
+        
+        // IMPORTANTE: Converte o índice da linha da visão (que pode estar filtrada)
+        // para o índice real do modelo de dados.
+        int indiceDoModelo = tblCursos.convertRowIndexToModel(linhaSelecionada);
+        
+        // Remove a linha do modelo de dados
+        modelo.removeRow(indiceDoModelo);
+
+        JOptionPane.showMessageDialog(this, "Curso excluído com sucesso!");
+    }
     }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     /**
      * @param args the command line arguments

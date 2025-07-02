@@ -26,8 +26,41 @@ public class CursoSaveView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblNome = new javax.swing.JLabel();
+        txtNome = new javax.swing.JTextField();
+        lblQuantidade = new javax.swing.JLabel();
+        txtQuantidade = new javax.swing.JTextField();
+        lblDescricao = new javax.swing.JLabel();
+        txtDescricao = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblNome.setText("Nome:");
+        getContentPane().add(lblNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
+
+        txtNome.setText("...");
+        getContentPane().add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, 200, -1));
+
+        lblQuantidade.setText("Quantidade:");
+        getContentPane().add(lblQuantidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, -1, -1));
+
+        txtQuantidade.setText("...");
+        getContentPane().add(txtQuantidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 170, -1));
+
+        lblDescricao.setText("Descrição:");
+        getContentPane().add(lblDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, -1, -1));
+
+        txtDescricao.setText("...");
+        getContentPane().add(txtDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 180, -1));
+
+        jLabel1.setText("Fornecedor:");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, -1));
+
+        jTextField1.setText("...");
+        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 140, 170, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -68,5 +101,13 @@ public class CursoSaveView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lblDescricao;
+    private javax.swing.JLabel lblNome;
+    private javax.swing.JLabel lblQuantidade;
+    private javax.swing.JTextField txtDescricao;
+    private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtQuantidade;
     // End of variables declaration//GEN-END:variables
 }
