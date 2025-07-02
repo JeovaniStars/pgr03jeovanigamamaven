@@ -4,19 +4,111 @@
  */
 package br.com.ifba.curso.view;
 
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 /**
  *
  * @author Bruno
  */
 public class CursoListar extends javax.swing.JFrame {
 
+    
+    private TableRowSorter<DefaultTableModel> sorter;
     /**
      * Creates new form CursoListar
      */
     public CursoListar() {
         initComponents();
+        // Centraliza a janela na tela
+        this.setLocationRelativeTo(null); 
+        
+        // Desabilita os botões de ação no início
+        btnEditar.setEnabled(false);
+        btnExcluir.setEnabled(false);
+        
+        // Carrega os dados de exemplo na tabela
+        carregarTabela();
+        
+        // Configura a funcionalidade de busca
+        configurarBusca();
+        
+        // Configura o que acontece ao selecionar uma linha
+        configurarSelecaoTabela();
     }
 
+    
+    /**
+    * Método para carregar dados de exemplo na tabela.
+    * No futuro, estes dados virão de um banco de dados.
+    */
+    private void carregarTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
+        // Limpa a tabela antes de carregar os dados
+        modelo.setRowCount(0); 
+
+        modelo.addRow(new Object[]{ "Melancia", 20, "Fruta de verão", "Empresa A" });
+        modelo.addRow(new Object[]{ "Maçã", 80, "Fruta Gala", "Empresa C" });
+        modelo.addRow(new Object[]{ "Pera", 10, "Fruta Williams", "Empresa B" });
+        modelo.addRow(new Object[]{ "Banana", 100, "Fruta Nanica", "Empresa C" });
+        modelo.addRow(new Object[]{ "Laranja", 60, "Fruta Pera", "Empresa D" });
+        modelo.addRow(new Object[]{ "Tangerina", 30, "Fruta Ponkan", "Empresa C" });
+        modelo.addRow(new Object[]{ "Amora", 40, "Fruta silvestre", "Empresa A" });
+    }
+    
+    /**
+    * Configura o campo de busca para filtrar a tabela dinamicamente.
+    */
+    private void configurarBusca() {
+        DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
+        sorter = new TableRowSorter<>(modelo);
+        tblCursos.setRowSorter(sorter);
+        
+        txtBusca.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filtrar();
+            }
+        });
+    }
+
+    /**
+    * Aplica o filtro na tabela com base no texto do campo de busca.
+    */
+    private void filtrar() {
+        String texto = txtBusca.getText();
+        if (texto.trim().length() == 0) {
+            sorter.setRowFilter(null);
+        } else {
+            // (?i) torna a busca case-insensitive (não diferencia maiúsculas de minúsculas)
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
+        }
+    }
+    
+    /**
+    * Habilita/desabilita os botões de Editar e Excluir ao selecionar uma linha.
+    */
+    private void configurarSelecaoTabela() {
+        tblCursos.getSelectionModel().addListSelectionListener(e -> {
+            boolean linhaSelecionada = tblCursos.getSelectedRow() != -1;
+            btnEditar.setEnabled(linhaSelecionada);
+            btnExcluir.setEnabled(linhaSelecionada);
+        });
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,11 +118,92 @@ public class CursoListar extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        lblImageBusca = new javax.swing.JLabel();
+        txtBusca = new javax.swing.JTextField();
+        btnAdicionar = new javax.swing.JButton();
+        btnHomescreen = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblCursos = new javax.swing.JTable();
+        btnExcluir = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblImageBusca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/ifba/curso/images/lupa.png"))); // NOI18N
+        jPanel1.add(lblImageBusca, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+
+        txtBusca.setText("Pesquisar...");
+        txtBusca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBuscaActionPerformed(evt);
+            }
+        });
+        jPanel1.add(txtBusca, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 30, 170, 30));
+
+        btnAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/ifba/curso/images/adicionar.png"))); // NOI18N
+        jPanel1.add(btnAdicionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 10, 140, 60));
+
+        btnHomescreen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/ifba/curso/images/home.png"))); // NOI18N
+        btnHomescreen.setText("Homescreen");
+        jPanel1.add(btnHomescreen, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 10, -1, -1));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 590, 80));
+
+        tblCursos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "NOME", "QUANTIDADE", "DESCRIÇÃO", "FORNECEDOR"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblCursos);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 550, 280));
+
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnExcluir, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 390, 120, 40));
+
+        btnEditar.setText("Editar");
+        getContentPane().add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, 120, 40));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtBuscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBuscaActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnExcluirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -68,5 +241,14 @@ public class CursoListar extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdicionar;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnExcluir;
+    private javax.swing.JButton btnHomescreen;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblImageBusca;
+    private javax.swing.JTable tblCursos;
+    private javax.swing.JTextField txtBusca;
     // End of variables declaration//GEN-END:variables
 }
