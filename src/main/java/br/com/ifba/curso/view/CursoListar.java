@@ -4,6 +4,7 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
@@ -63,6 +64,23 @@ public class CursoListar extends javax.swing.JFrame {
     /**
     * Configura o campo de busca para filtrar a tabela dinamicamente.
     */
+    
+    public void adicionarCursoNaTabela(Curso curso) {
+    // Pega o modelo da sua tabela
+    DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
+    
+    // Adiciona uma nova linha na tabela com os dados do curso que ele recebeu
+    modelo.addRow(new Object[]{
+        curso.getNome(),
+        curso.getQuantidade(),
+        curso.getDescricao(),
+        curso.getFornecedor()
+    });
+    
+    // Opcional: exibe uma mensagem de sucesso
+    JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
+}
+    
     private void configurarBusca() {
         DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
         sorter = new TableRowSorter<>(modelo);
@@ -145,6 +163,11 @@ public class CursoListar extends javax.swing.JFrame {
         jPanel1.add(txtBusca, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 30, 170, 30));
 
         btnAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/ifba/curso/images/adicionar.png"))); // NOI18N
+        btnAdicionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnAdicionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 10, 140, 60));
 
         btnHomescreen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/ifba/curso/images/home.png"))); // NOI18N
@@ -248,6 +271,12 @@ public class CursoListar extends javax.swing.JFrame {
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
+        // TODO add your handling code here:
+        CursoSaveView telaSalvar = new CursoSaveView(this);
+        telaSalvar.setVisible(true);
+    }//GEN-LAST:event_btnAdicionarActionPerformed
 
     /**
      * @param args the command line arguments

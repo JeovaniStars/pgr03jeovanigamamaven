@@ -4,18 +4,31 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.entity.Curso;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Bruno
  */
 public class CursoSaveView extends javax.swing.JFrame {
 
+    private final CursoListar telaPrincipal;
+    
     /**
      * Creates new form CursoSaveView
      */
-    public CursoSaveView() {
+    public CursoSaveView(CursoListar telaPrincipal) {
         initComponents();
+        this.setLocationRelativeTo(null); // Centraliza a janela
+        this.telaPrincipal = telaPrincipal; // Armazena a referência da tela principal
+        
+        // CORREÇÃO: Altera o comportamento do botão 'X' para não fechar o programa inteiro.
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,8 +45,10 @@ public class CursoSaveView extends javax.swing.JFrame {
         txtQuantidade = new javax.swing.JTextField();
         lblDescricao = new javax.swing.JLabel();
         txtDescricao = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        lblFornecedor = new javax.swing.JLabel();
+        txtFornecedor = new javax.swing.JTextField();
+        btnSalvar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -56,57 +71,85 @@ public class CursoSaveView extends javax.swing.JFrame {
         txtDescricao.setText("...");
         getContentPane().add(txtDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 180, -1));
 
-        jLabel1.setText("Fornecedor:");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, -1));
+        lblFornecedor.setText("Fornecedor:");
+        getContentPane().add(lblFornecedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, -1));
 
-        jTextField1.setText("...");
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 140, 170, -1));
+        txtFornecedor.setText("...");
+        getContentPane().add(txtFornecedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 140, 170, -1));
+
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnSalvar, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 110, 40));
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 110, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        String nome = txtNome.getText();
+        String descricao = txtDescricao.getText();
+        String fornecedor = txtFornecedor.getText();
+        int quantidade = 0;
+
+        if (nome.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "O campo 'Nome' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            quantidade = Integer.parseInt(txtQuantidade.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "O campo 'Quantidade' deve ser um número válido.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Curso novoCurso = new Curso(nome, quantidade, descricao, fornecedor);
+        
+        this.telaPrincipal.adicionarCursoNaTabela(novoCurso);
+
+        this.dispose();
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
     /**
      * @param args the command line arguments
      */
+    // O método main deve ser comentado ou removido para evitar erros.
+    /*
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CursoSaveView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CursoSaveView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CursoSaveView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CursoSaveView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CursoSaveView().setVisible(true);
+                // new CursoSaveView().setVisible(true); // Esta chamada daria erro
             }
         });
     }
+    */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnSalvar;
     private javax.swing.JLabel lblDescricao;
+    private javax.swing.JLabel lblFornecedor;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblQuantidade;
     private javax.swing.JTextField txtDescricao;
+    private javax.swing.JTextField txtFornecedor;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtQuantidade;
     // End of variables declaration//GEN-END:variables
