@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 
-@MappedSuperclass // Essencial para que as subclasses herdem seus mapeamentos
+@MappedSuperclass 
 public abstract class PersistenceEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

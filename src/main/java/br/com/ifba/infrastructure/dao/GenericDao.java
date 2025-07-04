@@ -1,13 +1,15 @@
 package br.com.ifba.infrastructure.dao;
 
+import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import java.io.Serializable;
+import java.io.Serializable; // Importe Serializable
 import java.util.List;
 
-
-public abstract class GenericDao<T, ID extends Serializable> implements IGenericDao<T, ID> {
+//                  A CORREÇÃO ESTÁ NESTA LINHA
+//                  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+public abstract class GenericDao<T extends PersistenceEntity, ID extends Serializable> implements GenericIDao<T, ID> {
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -18,7 +20,7 @@ public abstract class GenericDao<T, ID extends Serializable> implements IGeneric
         this.entityClass = entityClass;
     }
 
-    @Override 
+    @Override
     @Transactional
     public T save(T entity) {
         // O método merge lida tanto com a inserção (novo) quanto com a atualização (existente).
