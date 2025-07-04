@@ -1,28 +1,15 @@
 package br.com.ifba.curso.entity;
 
+import br.com.ifba.curso.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serializable;
-import java.util.Objects;
 
-/**
- * Representa a entidade Curso para o banco de dados.
- *
- * @author Bruno
- */
 @Entity
-@Table(name = "cursos") // Define o nome da tabela no banco de dados
-public class Curso implements Serializable {
+@Table(name = "cursos")
+public class Curso extends PersistenceEntity {
 
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    // O serialVersionUID, id, getId, setId, equals e hashCode são herdados de PersistenceEntity
 
     @Column(name = "nome", nullable = false, length = 150)
     private String nome;
@@ -46,15 +33,7 @@ public class Curso implements Serializable {
         this.fornecedor = fornecedor;
     }
 
-    // GETTERS E SETTERS
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // GETTERS E SETTERS (apenas para os campos desta classe)
 
     public String getNome() {
         return nome;
@@ -86,26 +65,5 @@ public class Curso implements Serializable {
 
     public void setFornecedor(String fornecedor) {
         this.fornecedor = fornecedor;
-    }
-
-    // --- MÉTODOS EQUALS E HASHCODE ---
-
-    /**
-     * Compara este Curso com outro objeto. A comparação é baseada apenas no ID.
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Curso curso = (Curso) o;
-        return Objects.equals(id, curso.id);
-    }
-
-    /**
-     * Gera um código hash para o objeto, baseado apenas no ID.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
