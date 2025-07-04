@@ -1,6 +1,6 @@
 package br.com.ifba.curso.entity;
 
-import br.com.ifba.curso.infrastructure.entity.PersistenceEntity;
+import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
