@@ -4,9 +4,7 @@ import br.com.ifba.infrastructure.dao.GenericDao;
 import br.com.ifba.curso.entity.Curso;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class CursoDao extends GenericDao<Curso, Long> implements CursoIDao {
 
     public CursoDao() {

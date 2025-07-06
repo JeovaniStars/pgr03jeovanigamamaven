@@ -22,22 +22,26 @@ import javax.swing.table.TableRowSorter;
 public class CursoListar extends javax.swing.JFrame {
 
     
-    private final CursoIDao cursoDao = new CursoDao();
+    private CursoIDao cursoDao; 
     private List<Curso> cursos; // Guarda a lista de cursos vinda do banco
     private TableRowSorter<DefaultTableModel> sorter;
     
     
     public CursoListar() {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        
-        // Configurações iniciais da tela
-        btnEditar.setEnabled(false);
-        btnExcluir.setEnabled(false);
-        
-        this.carregarTabela();
-        this.configurarBusca();
-        this.configurarSelecaoTabela();
+        // Inicialize o DAO AQUI, dentro de um try-catch
+    try {
+        this.cursoDao = new CursoDao();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Falha crítica ao inicializar o DAO: " + e.getMessage());
+        // Impede que o resto do código execute se o DAO falhar
+        System.exit(0); 
+    }
+
+    // O resto do seu construtor continua aqui...
+    initComponents();
+    this.setLocationRelativeTo(null);
+    // ... etc
+    this.carregarTabela();
     }
 
     
