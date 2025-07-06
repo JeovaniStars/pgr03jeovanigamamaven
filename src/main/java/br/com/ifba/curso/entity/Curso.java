@@ -14,26 +14,23 @@ public class Curso extends PersistenceEntity {
     @Column(name = "nome", nullable = false, length = 150)
     private String nome;
 
-    @Column(name = "quantidade_vagas")
-    private int quantidade;
-
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String descricao;
-
-    @Column(name = "fornecedor", length = 100)
-    private String fornecedor;
+    
+    @Column(name = "ativo", nullable = false)
+    private boolean ativo;
 
     public Curso() {
+        // Construtor padrão necessário para o JPA
     }
 
-    public Curso(String nome, int quantidade, String descricao, String fornecedor) {
+    public Curso(String nome, String descricao, boolean ativo) {
         this.nome = nome;
-        this.quantidade = quantidade;
         this.descricao = descricao;
-        this.fornecedor = fornecedor;
+        this.ativo = ativo;
     }
 
-    // GETTERS E SETTERS (apenas para os campos desta classe)
+    // GETTERS E SETTERS
 
     public String getNome() {
         return nome;
@@ -41,14 +38,6 @@ public class Curso extends PersistenceEntity {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
     }
 
     public String getDescricao() {
@@ -59,11 +48,11 @@ public class Curso extends PersistenceEntity {
         this.descricao = descricao;
     }
 
-    public String getFornecedor() {
-        return fornecedor;
+    public boolean isAtivo() {
+        return ativo;
     }
 
-    public void setFornecedor(String fornecedor) {
-        this.fornecedor = fornecedor;
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

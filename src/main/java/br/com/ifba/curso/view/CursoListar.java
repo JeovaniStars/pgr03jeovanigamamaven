@@ -145,6 +145,7 @@ public class CursoListar extends javax.swing.JFrame {
         tblCursos = new javax.swing.JTable();
         btnExcluir = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
+        btnListar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -178,20 +179,20 @@ public class CursoListar extends javax.swing.JFrame {
 
         tblCursos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "NOME", "QUANTIDADE", "DESCRIÇÃO", "FORNECEDOR"
+                "NOME", "DESCRIÇÃO", "ESTADO"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -221,6 +222,14 @@ public class CursoListar extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, 120, 40));
+
+        btnListar.setText("Listar");
+        btnListar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnListarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnListar, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 390, 120, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -278,6 +287,10 @@ public class CursoListar extends javax.swing.JFrame {
         telaSalvar.setVisible(true);
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
+    private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnListarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -318,6 +331,7 @@ public class CursoListar extends javax.swing.JFrame {
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnHomescreen;
+    private javax.swing.JButton btnListar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblImageBusca;

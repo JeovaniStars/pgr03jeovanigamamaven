@@ -4,6 +4,8 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.dao.CursoDao;
+import br.com.ifba.curso.dao.CursoIDao;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
 
@@ -13,19 +15,19 @@ import javax.swing.JOptionPane;
  */
 public class CursoSaveView extends javax.swing.JFrame {
 
+    private final CursoIDao cursoDao = new CursoDao();
     private final CursoListar telaPrincipal;
     
-    /**
-     * Creates new form CursoSaveView
-     */
     public CursoSaveView(CursoListar telaPrincipal) {
         initComponents();
-        this.setLocationRelativeTo(null); // Centraliza a janela
-        this.telaPrincipal = telaPrincipal; // Armazena a referência da tela principal
-        
-        // CORREÇÃO: Altera o comportamento do botão 'X' para não fechar o programa inteiro.
+        this.setLocationRelativeTo(null);
+        this.telaPrincipal = telaPrincipal;
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-    
+        
+        // Limpa os campos iniciais
+        txtNome.setText("");
+        txtDescricao.setText("");
+        cbxEstado.setSelectedItem("Ativo");
     }
     
     
@@ -41,14 +43,12 @@ public class CursoSaveView extends javax.swing.JFrame {
 
         lblNome = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
-        lblQuantidade = new javax.swing.JLabel();
-        txtQuantidade = new javax.swing.JTextField();
         lblDescricao = new javax.swing.JLabel();
         txtDescricao = new javax.swing.JTextField();
-        lblFornecedor = new javax.swing.JLabel();
-        txtFornecedor = new javax.swing.JTextField();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        lblEstado = new javax.swing.JLabel();
+        cbxEstado = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -59,23 +59,11 @@ public class CursoSaveView extends javax.swing.JFrame {
         txtNome.setText("...");
         getContentPane().add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, 200, -1));
 
-        lblQuantidade.setText("Quantidade:");
-        getContentPane().add(lblQuantidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, -1, -1));
-
-        txtQuantidade.setText("...");
-        getContentPane().add(txtQuantidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 170, -1));
-
         lblDescricao.setText("Descrição:");
-        getContentPane().add(lblDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, -1, -1));
+        getContentPane().add(lblDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, -1, -1));
 
         txtDescricao.setText("...");
-        getContentPane().add(txtDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 180, -1));
-
-        lblFornecedor.setText("Fornecedor:");
-        getContentPane().add(lblFornecedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, -1));
-
-        txtFornecedor.setText("...");
-        getContentPane().add(txtFornecedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 140, 170, -1));
+        getContentPane().add(txtDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 70, 180, -1));
 
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -93,6 +81,12 @@ public class CursoSaveView extends javax.swing.JFrame {
         });
         getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 110, 40));
 
+        lblEstado.setText("Estado:");
+        getContentPane().add(lblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, -1, -1));
+
+        cbxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ativo", "Inativo" }));
+        getContentPane().add(cbxEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 120, 190, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -103,28 +97,25 @@ public class CursoSaveView extends javax.swing.JFrame {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
-        String nome = txtNome.getText();
-        String descricao = txtDescricao.getText();
-        String fornecedor = txtFornecedor.getText();
-        int quantidade = 0;
-
-        if (nome.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "O campo 'Nome' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
         try {
-            quantidade = Integer.parseInt(txtQuantidade.getText());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "O campo 'Quantidade' deve ser um número válido.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-            return;
+            Curso novoCurso = new Curso();
+            novoCurso.setNome(txtNome.getText());
+            novoCurso.setDescricao(txtDescricao.getText());
+            // Define o estado com base na seleção do ComboBox
+            novoCurso.setAtivo(cbxEstado.getSelectedItem().toString().equals("Ativo"));
+
+            // Salva no banco de dados
+            cursoDao.save(novoCurso);
+            
+            JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Atualiza a tabela na tela principal e fecha a janela de salvar
+            this.telaPrincipal.carregarTabela();
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar o curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-
-        Curso novoCurso = new Curso(nome, quantidade, descricao, fornecedor);
-        
-        this.telaPrincipal.adicionarCursoNaTabela(novoCurso);
-
-        this.dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
@@ -144,13 +135,11 @@ public class CursoSaveView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JComboBox<String> cbxEstado;
     private javax.swing.JLabel lblDescricao;
-    private javax.swing.JLabel lblFornecedor;
+    private javax.swing.JLabel lblEstado;
     private javax.swing.JLabel lblNome;
-    private javax.swing.JLabel lblQuantidade;
     private javax.swing.JTextField txtDescricao;
-    private javax.swing.JTextField txtFornecedor;
     private javax.swing.JTextField txtNome;
-    private javax.swing.JTextField txtQuantidade;
     // End of variables declaration//GEN-END:variables
 }
