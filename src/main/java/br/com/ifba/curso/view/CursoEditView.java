@@ -4,17 +4,40 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.dao.CursoDao;
+import br.com.ifba.curso.dao.CursoIDao;
+import br.com.ifba.curso.entity.Curso;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Bruno
  */
 public class CursoEditView extends javax.swing.JFrame {
-
+    
+    private final CursoIDao cursoDao = new CursoDao();
+    private final CursoListar telaPrincipal;
+    private final Curso curso;
     /**
      * Creates new form CursoEditView
      */
-    public CursoEditView() {
+    public CursoEditView(CursoListar telaPrincipal, Curso curso) {
         initComponents();
+        this.telaPrincipal = telaPrincipal;
+        this.curso = curso; // Recebe e guarda o curso
+        
+        // Configurações da janela
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        
+        // Chama o método para preencher os campos da tela com os dados do curso
+        this.preencheCampos();
+    }
+    
+    private void preencheCampos() {
+        txtNome.setText(this.curso.getNome());
+        txtDescricao.setText(this.curso.getDescricao());
+        cbxEstado.setSelectedItem(this.curso.isAtivo() ? "Ativo" : "Inativo");
     }
 
     /**
@@ -47,7 +70,7 @@ public class CursoEditView extends javax.swing.JFrame {
         lblEstado.setText("Estado:");
         getContentPane().add(lblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, -1, -1));
 
-        cbxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ativo", "Inativo" }));
         getContentPane().add(cbxEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, 150, -1));
 
         txtDescricao.setText("...");
@@ -57,48 +80,56 @@ public class CursoEditView extends javax.swing.JFrame {
         getContentPane().add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, 150, -1));
 
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnSalvar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, -1, -1));
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 150, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        try {
+            // Atualiza o objeto 'curso' com os novos dados da tela
+            this.curso.setNome(txtNome.getText());
+            this.curso.setDescricao(txtDescricao.getText());
+            this.curso.setAtivo(cbxEstado.getSelectedItem().toString().equals("Ativo"));
+
+            // Salva as alterações no banco (o método 'save' do DAO serve para atualizar)
+            cursoDao.save(this.curso);
+            
+            JOptionPane.showMessageDialog(this, "Curso atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Atualiza a tabela na tela principal e fecha esta janela
+            this.telaPrincipal.carregarTabela();
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar o curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CursoEditView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CursoEditView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CursoEditView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CursoEditView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CursoEditView().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;

@@ -7,7 +7,7 @@ import jakarta.persistence.Persistence;
 
 public class JPAUtil {
 
-    private static final String PERSISTENCE_UNIT_NAME = "default"; // Verifique o nome no seu arquivo persistence.xml
+    private static final String PERSISTENCE_UNIT_NAME = "meuPU"; 
     private static EntityManagerFactory factory;
 
     // Garante que a factory seja criada apenas uma vez

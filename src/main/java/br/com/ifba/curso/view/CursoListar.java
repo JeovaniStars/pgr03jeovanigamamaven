@@ -4,7 +4,10 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.dao.CursoDao;
+import br.com.ifba.curso.dao.CursoIDao;
 import br.com.ifba.curso.entity.Curso;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
@@ -19,73 +22,62 @@ import javax.swing.table.TableRowSorter;
 public class CursoListar extends javax.swing.JFrame {
 
     
+    private final CursoIDao cursoDao = new CursoDao();
+    private List<Curso> cursos; // Guarda a lista de cursos vinda do banco
     private TableRowSorter<DefaultTableModel> sorter;
-    /**
-     * Creates new form CursoListar
-     */
+    
+    
     public CursoListar() {
         initComponents();
-        // Centraliza a janela na tela
-        this.setLocationRelativeTo(null); 
+        this.setLocationRelativeTo(null);
         
-        // Desabilita os botões de ação no início
+        // Configurações iniciais da tela
         btnEditar.setEnabled(false);
         btnExcluir.setEnabled(false);
         
-        // Carrega os dados de exemplo na tabela
-        carregarTabela();
-        
-        // Configura a funcionalidade de busca
-        configurarBusca();
-        
-        // Configura o que acontece ao selecionar uma linha
-        configurarSelecaoTabela();
+        this.carregarTabela();
+        this.configurarBusca();
+        this.configurarSelecaoTabela();
     }
 
     
-    /**
-    * Método para carregar dados de exemplo na tabela.
-    * No futuro, estes dados virão de um banco de dados.
-    */
-    private void carregarTabela() {
+    public void carregarTabela() {
         DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
-        // Limpa a tabela antes de carregar os dados
-        modelo.setRowCount(0); 
+        modelo.setRowCount(0); // Limpa a tabela antes de popular
 
-        modelo.addRow(new Object[]{ "Melancia", 20, "Fruta de verão", "Empresa A" });
-        modelo.addRow(new Object[]{ "Maçã", 80, "Fruta Gala", "Empresa C" });
-        modelo.addRow(new Object[]{ "Pera", 10, "Fruta Williams", "Empresa B" });
-        modelo.addRow(new Object[]{ "Banana", 100, "Fruta Nanica", "Empresa C" });
-        modelo.addRow(new Object[]{ "Laranja", 60, "Fruta Pera", "Empresa D" });
-        modelo.addRow(new Object[]{ "Tangerina", 30, "Fruta Ponkan", "Empresa C" });
-        modelo.addRow(new Object[]{ "Amora", 40, "Fruta silvestre", "Empresa A" });
+        // Busca todos os cursos no banco de dados
+        this.cursos = cursoDao.findAll();
+
+        // Itera sobre a lista e adiciona cada curso como uma linha na tabela
+        for (Curso curso : this.cursos) {
+            String estado = curso.isAtivo() ? "Ativo" : "Inativo";
+            modelo.addRow(new Object[]{
+                curso.getNome(),
+                curso.getDescricao(),
+                estado
+            });
+        }
+    }
+
+    /**
+     * Habilita/desabilita os botões de Editar e Excluir ao selecionar uma linha.
+     */
+    private void configurarSelecaoTabela() {
+        tblCursos.getSelectionModel().addListSelectionListener(e -> {
+            boolean linhaSelecionada = tblCursos.getSelectedRow() != -1;
+            btnEditar.setEnabled(linhaSelecionada);
+            btnExcluir.setEnabled(linhaSelecionada);
+        });
     }
     
     /**
-    * Configura o campo de busca para filtrar a tabela dinamicamente.
-    */
-    
-    public void adicionarCursoNaTabela(Curso curso) {
-    // Pega o modelo da sua tabela
-    DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
-    
-    // Adiciona uma nova linha na tabela com os dados do curso que ele recebeu
-    modelo.addRow(new Object[]{
-        curso.getNome(),
-        curso.getQuantidade(),
-        curso.getDescricao(),
-        curso.getFornecedor()
-    });
-    
-    // Opcional: exibe uma mensagem de sucesso
-    JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
-}
-    
+     * Configura o campo de busca para filtrar a tabela dinamicamente.
+     */
     private void configurarBusca() {
         DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
         sorter = new TableRowSorter<>(modelo);
         tblCursos.setRowSorter(sorter);
-        
+
         txtBusca.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -105,27 +97,16 @@ public class CursoListar extends javax.swing.JFrame {
     }
 
     /**
-    * Aplica o filtro na tabela com base no texto do campo de busca.
-    */
+     * Aplica o filtro na tabela com base no texto do campo de busca.
+     */
     private void filtrar() {
         String texto = txtBusca.getText();
         if (texto.trim().length() == 0) {
             sorter.setRowFilter(null);
         } else {
-            // (?i) torna a busca case-insensitive (não diferencia maiúsculas de minúsculas)
+            // (?i) torna a busca case-insensitive
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
         }
-    }
-    
-    /**
-    * Habilita/desabilita os botões de Editar e Excluir ao selecionar uma linha.
-    */
-    private void configurarSelecaoTabela() {
-        tblCursos.getSelectionModel().addListSelectionListener(e -> {
-            boolean linhaSelecionada = tblCursos.getSelectedRow() != -1;
-            btnEditar.setEnabled(linhaSelecionada);
-            btnExcluir.setEnabled(linhaSelecionada);
-        });
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -240,55 +221,61 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         // TODO add your handling code here:
-        // Pega o índice da linha que o usuário selecionou na tabela
-    int linhaSelecionada = tblCursos.getSelectedRow();
+        int linhaSelecionada = tblCursos.getSelectedRow();
 
-    // Verifica se alguma linha foi realmente selecionada. Se não, exibe um aviso.
-    if (linhaSelecionada == -1) {
-        JOptionPane.showMessageDialog(this, "Por favor, selecione uma linha para excluir.", "Nenhuma linha selecionada", JOptionPane.WARNING_MESSAGE);
-        return; // Encerra a execução do método
-    }
+        if (linhaSelecionada == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione um curso para excluir.");
+            return;
+        }
 
-    // Pega o nome do curso (que está na primeira coluna, índice 0) para usar na mensagem
-    String nomeCurso = tblCursos.getValueAt(linhaSelecionada, 0).toString();
-    
-    // Cria e exibe a caixa de diálogo de confirmação
-    int resposta = JOptionPane.showConfirmDialog(
-            this, // Componente pai (a própria janela)
-            "Deseja realmente excluir o curso '" + nomeCurso + "'?", // A mensagem da pergunta
-            "Confirmar Exclusão", // O título da janela de diálogo
-            JOptionPane.YES_NO_OPTION, // Define os botões para "Sim" e "Não"
-            JOptionPane.WARNING_MESSAGE // Adiciona um ícone de aviso
-    );
+        int indiceReal = tblCursos.convertRowIndexToModel(linhaSelecionada);
+        Curso cursoParaExcluir = this.cursos.get(indiceReal);
 
-    // Verifica se o usuário clicou no botão "Sim" (YES_OPTION)
-    if (resposta == JOptionPane.YES_OPTION) {
-        // Pega o modelo da tabela para que possamos remover a linha
-        DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
-        
-        // IMPORTANTE: Converte o índice da linha da visão (que pode estar filtrada)
-        // para o índice real do modelo de dados.
-        int indiceDoModelo = tblCursos.convertRowIndexToModel(linhaSelecionada);
-        
-        // Remove a linha do modelo de dados
-        modelo.removeRow(indiceDoModelo);
+        int resposta = JOptionPane.showConfirmDialog(
+                this,
+                "Deseja realmente excluir o curso '" + cursoParaExcluir.getNome() + "'?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION);
 
-        JOptionPane.showMessageDialog(this, "Curso excluído com sucesso!");
-    }
+        if (resposta == JOptionPane.YES_OPTION) {
+            try {
+                cursoDao.delete(cursoParaExcluir);
+                JOptionPane.showMessageDialog(this, "Curso excluído com sucesso!");
+                this.carregarTabela(); // Recarrega a tabela para mostrar o resultado
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Erro ao excluir o curso.", "Erro", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         // TODO add your handling code here:
+        int linhaSelecionada = tblCursos.getSelectedRow();
+        
+        // Verifica se alguma linha foi selecionada
+        if (linhaSelecionada == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione um curso para editar.");
+            return;
+        }
+
+        // Pega o curso correto da nossa lista 'cursos'
+        int indiceReal = tblCursos.convertRowIndexToModel(linhaSelecionada);
+        Curso cursoParaEditar = this.cursos.get(indiceReal);
+
+        // Abre a tela de edição, passando a referência desta tela e o objeto a ser editado
+        new CursoEditView(this, cursoParaEditar).setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         // TODO add your handling code here:
-        CursoSaveView telaSalvar = new CursoSaveView(this);
-        telaSalvar.setVisible(true);
+        new CursoSaveView(this).setVisible(true);
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
         // TODO add your handling code here:
+        this.carregarTabela();
+        JOptionPane.showMessageDialog(this, "Lista de cursos atualizada!");
     }//GEN-LAST:event_btnListarActionPerformed
 
     /**
