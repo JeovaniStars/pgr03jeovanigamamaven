@@ -29,49 +29,50 @@ public class CursoListar extends javax.swing.JFrame {
     
     
     public CursoListar() {
-    initComponents();
+        initComponents();
         this.setLocationRelativeTo(null);
-        
         this.cursoController = new CursoController();
-        
-        this.configurarTela(); 
+        this.configurarTela();
     }
-
+    
     private void configurarTela() {
         btnEditar.setEnabled(false);
         btnExcluir.setEnabled(false);
-        this.carregarTabela();
+        this.carregarTabelaCompleta();
         this.configurarBusca();
         this.configurarSelecaoTabela();
     }
-    
-    public void carregarTabela() {
+
+    private void preencherTabela(List<Curso> listaCursos) {
+        DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
+        modelo.setRowCount(0);
+        this.cursos = listaCursos;
+
+        for (Curso curso : this.cursos) {
+            String estado = curso.isAtivo() ? "Ativo" : "Inativo";
+            modelo.addRow(new Object[]{
+                curso.getNome(),
+                curso.getDescricao(),
+                estado
+            });
+        }
+    }
+
+    /**
+     * Carrega a lista completa de cursos do banco de dados e exibe na tela.
+     */
+    public void carregarTabelaCompleta() {
         try {
-            DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
-            modelo.setRowCount(0);
-
-            // 4. CHAMADA CORRIGIDA: USAMOS O MÉTODO DO CONTROLLER
-            this.cursos = cursoController.findAllCursos();
-
-            for (Curso curso : this.cursos) {
-                String estado = curso.isAtivo() ? "Ativo" : "Inativo";
-                modelo.addRow(new Object[]{
-                    curso.getNome(),
-                    curso.getDescricao(),
-                    estado
-                });
-            }
+            List<Curso> todosCursos = cursoController.findAllCursos();
+            preencherTabela(todosCursos);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Erro ao carregar dados da tabela: \n" + e.getMessage(), 
+            JOptionPane.showMessageDialog(this,
+                "Erro ao carregar dados da tabela: \n" + e.getMessage(),
                 "Erro", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
 
-    /**
-     * Habilita/desabilita os botões de Editar e Excluir ao selecionar uma linha.
-     */
     private void configurarSelecaoTabela() {
         tblCursos.getSelectionModel().addListSelectionListener(e -> {
             boolean linhaSelecionada = tblCursos.getSelectedRow() != -1;
@@ -79,43 +80,34 @@ public class CursoListar extends javax.swing.JFrame {
             btnExcluir.setEnabled(linhaSelecionada);
         });
     }
-    
-    /**
-     * Configura o campo de busca para filtrar a tabela dinamicamente.
-     */
+
     private void configurarBusca() {
-        DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
-        sorter = new TableRowSorter<>(modelo);
-        tblCursos.setRowSorter(sorter);
-
+        // O RowSorter não é mais necessário para o filtro no banco, mas o listener sim.
         txtBusca.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                filtrar();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                filtrar();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                filtrar();
-            }
+            @Override public void insertUpdate(DocumentEvent e) { filtrar(); }
+            @Override public void removeUpdate(DocumentEvent e) { filtrar(); }
+            @Override public void changedUpdate(DocumentEvent e) { filtrar(); }
         });
     }
 
     /**
-     * Aplica o filtro na tabela com base no texto do campo de busca.
+     * MÉTODO FILTRAR ATUALIZADO: Agora busca no banco de dados.
      */
     private void filtrar() {
-        String texto = txtBusca.getText();
-        if (texto.trim().length() == 0) {
-            sorter.setRowFilter(null);
-        } else {
-            // (?i) torna a busca case-insensitive
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
+        String textoBusca = txtBusca.getText();
+        try {
+            if (textoBusca.isBlank()) {
+                // Se a busca estiver vazia, carrega todos os cursos
+                carregarTabelaCompleta();
+            } else {
+                // Se tiver algo digitado, busca no banco por nome
+                List<Curso> cursosFiltrados = cursoController.findByNome(textoBusca);
+                preencherTabela(cursosFiltrados);
+            }
+        } catch (Exception e) {
+             JOptionPane.showMessageDialog(this,
+                "Erro ao buscar cursos: \n" + e.getMessage(),
+                "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
     /**
@@ -164,6 +156,11 @@ public class CursoListar extends javax.swing.JFrame {
 
         btnHomescreen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/ifba/curso/images/home.png"))); // NOI18N
         btnHomescreen.setText("Homescreen");
+        btnHomescreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHomescreenActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnHomescreen, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 10, -1, -1));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 590, 80));
@@ -250,7 +247,7 @@ public class CursoListar extends javax.swing.JFrame {
                 cursoController.deleteCurso(cursoParaExcluir);
                 
                 JOptionPane.showMessageDialog(this, "Curso excluído com sucesso!");
-                this.carregarTabela(); // Recarrega a tabela
+                this.carregarTabelaCompleta(); 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Erro ao excluir o curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
@@ -283,9 +280,14 @@ public class CursoListar extends javax.swing.JFrame {
 
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
         // TODO add your handling code here:
-        this.carregarTabela();
+        this.carregarTabelaCompleta();
         JOptionPane.showMessageDialog(this, "Lista de cursos atualizada!");
     }//GEN-LAST:event_btnListarActionPerformed
+
+    private void btnHomescreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomescreenActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnHomescreenActionPerformed
 
     /**
      * @param args the command line arguments

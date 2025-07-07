@@ -16,4 +16,5 @@ public interface CursoIService {
     Curso updateCurso(Curso curso);
     void deleteCurso(Curso curso);
     List<Curso> findAllCursos();
+    List<Curso> findByNome(String nome);
 }

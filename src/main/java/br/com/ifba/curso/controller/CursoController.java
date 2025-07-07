@@ -29,4 +29,9 @@ public class CursoController implements CursoIController {
     public List<Curso> findAllCursos() {
         return this.cursoService.findAllCursos();
     }
+    
+    @Override
+    public List<Curso> findByNome(String nome) {
+        return this.cursoService.findByNome(nome);
+    }
 }

@@ -57,4 +57,10 @@ public class CursoService implements CursoIService {
     public List<Curso> findAllCursos() {
         return this.cursoDao.findAll();
     }
+    
+    @Override
+    public List<Curso> findByNome(String nome) {
+        // Por enquanto, apenas repassamos a chamada para o DAO.
+        return this.cursoDao.findByNome(nome);
+}
 }
