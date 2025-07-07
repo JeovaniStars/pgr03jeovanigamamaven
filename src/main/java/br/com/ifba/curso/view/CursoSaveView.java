@@ -4,8 +4,8 @@
  */
 package br.com.ifba.curso.view;
 
-import br.com.ifba.curso.dao.CursoDao;
-import br.com.ifba.curso.dao.CursoIDao;
+import br.com.ifba.curso.controller.CursoController;
+import br.com.ifba.curso.controller.CursoIController;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
 
@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class CursoSaveView extends javax.swing.JFrame {
 
-    private final CursoIDao cursoDao = new CursoDao();
+    private final CursoIController cursoController;
     private final CursoListar telaPrincipal;
     
     public CursoSaveView(CursoListar telaPrincipal) {
@@ -24,7 +24,10 @@ public class CursoSaveView extends javax.swing.JFrame {
         this.telaPrincipal = telaPrincipal;
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
-        // Limpa os campos iniciais
+        // 3. INICIALIZAÇÃO CORRIGIDA
+        this.cursoController = new CursoController();
+        
+        // Limpa os campos iniciais para um novo cadastro
         txtNome.setText("");
         txtDescricao.setText("");
         cbxEstado.setSelectedItem("Ativo");
@@ -101,20 +104,19 @@ public class CursoSaveView extends javax.swing.JFrame {
             Curso novoCurso = new Curso();
             novoCurso.setNome(txtNome.getText());
             novoCurso.setDescricao(txtDescricao.getText());
-            // Define o estado com base na seleção do ComboBox
             novoCurso.setAtivo(cbxEstado.getSelectedItem().toString().equals("Ativo"));
 
-            // Salva no banco de dados
-            cursoDao.save(novoCurso);
+            // A validação de campos agora acontece na camada de Serviço, chamada pelo Controller.
+            cursoController.saveCurso(novoCurso);
             
             JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             
-            // Atualiza a tabela na tela principal e fecha a janela de salvar
             this.telaPrincipal.carregarTabela();
             this.dispose();
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar o curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            // A mensagem de erro agora vem da camada de Serviço (ex: "O campo 'Nome' é obrigatório.")
+            JOptionPane.showMessageDialog(this, "Erro ao salvar o curso: " + e.getMessage(), "Erro de Validação", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 

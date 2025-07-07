@@ -4,8 +4,8 @@
  */
 package br.com.ifba.curso.view;
 
-import br.com.ifba.curso.dao.CursoDao;
-import br.com.ifba.curso.dao.CursoIDao;
+import br.com.ifba.curso.controller.CursoController;
+import br.com.ifba.curso.controller.CursoIController;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
 
@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class CursoEditView extends javax.swing.JFrame {
     
-    private final CursoIDao cursoDao = new CursoDao();
+    private final CursoIController cursoController;
     private final CursoListar telaPrincipal;
     private final Curso curso;
     /**
@@ -24,13 +24,14 @@ public class CursoEditView extends javax.swing.JFrame {
     public CursoEditView(CursoListar telaPrincipal, Curso curso) {
         initComponents();
         this.telaPrincipal = telaPrincipal;
-        this.curso = curso; // Recebe e guarda o curso
+        this.curso = curso;
         
-        // Configurações da janela
+        // 3. INICIALIZAÇÃO CORRIGIDA
+        this.cursoController = new CursoController();
+        
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
-        // Chama o método para preencher os campos da tela com os dados do curso
         this.preencheCampos();
     }
     
@@ -101,17 +102,16 @@ public class CursoEditView extends javax.swing.JFrame {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
         try {
-            // Atualiza o objeto 'curso' com os novos dados da tela
+        // Pega os dados da tela e atualiza o objeto 'curso'
             this.curso.setNome(txtNome.getText());
             this.curso.setDescricao(txtDescricao.getText());
             this.curso.setAtivo(cbxEstado.getSelectedItem().toString().equals("Ativo"));
-
-            // Salva as alterações no banco (o método 'save' do DAO serve para atualizar)
-            cursoDao.save(this.curso);
+            
+            // 4. CHAMADA CORRIGIDA: USANDO O CONTROLLER PARA ATUALIZAR
+            cursoController.updateCurso(this.curso);
             
             JOptionPane.showMessageDialog(this, "Curso atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             
-            // Atualiza a tabela na tela principal e fecha esta janela
             this.telaPrincipal.carregarTabela();
             this.dispose();
 

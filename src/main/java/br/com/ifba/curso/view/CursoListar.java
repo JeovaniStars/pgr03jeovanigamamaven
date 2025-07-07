@@ -4,8 +4,9 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.curso.controller.CursoController;
+import br.com.ifba.curso.controller.CursoIController;
 import br.com.ifba.curso.dao.CursoDao;
-import br.com.ifba.curso.dao.CursoIDao;
 import br.com.ifba.curso.entity.Curso;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -22,44 +23,49 @@ import javax.swing.table.TableRowSorter;
 public class CursoListar extends javax.swing.JFrame {
 
     
-    private CursoIDao cursoDao; 
+    private final CursoIController cursoController; 
     private List<Curso> cursos; // Guarda a lista de cursos vinda do banco
     private TableRowSorter<DefaultTableModel> sorter;
     
     
     public CursoListar() {
-        // Inicialize o DAO AQUI, dentro de um try-catch
-    try {
-        this.cursoDao = new CursoDao();
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Falha crítica ao inicializar o DAO: " + e.getMessage());
-        // Impede que o resto do código execute se o DAO falhar
-        System.exit(0); 
-    }
-
-    // O resto do seu construtor continua aqui...
     initComponents();
-    this.setLocationRelativeTo(null);
-    // ... etc
-    this.carregarTabela();
+        this.setLocationRelativeTo(null);
+        
+        this.cursoController = new CursoController();
+        
+        this.configurarTela(); 
     }
 
+    private void configurarTela() {
+        btnEditar.setEnabled(false);
+        btnExcluir.setEnabled(false);
+        this.carregarTabela();
+        this.configurarBusca();
+        this.configurarSelecaoTabela();
+    }
     
     public void carregarTabela() {
-        DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
-        modelo.setRowCount(0); // Limpa a tabela antes de popular
+        try {
+            DefaultTableModel modelo = (DefaultTableModel) tblCursos.getModel();
+            modelo.setRowCount(0);
 
-        // Busca todos os cursos no banco de dados
-        this.cursos = cursoDao.findAll();
+            // 4. CHAMADA CORRIGIDA: USAMOS O MÉTODO DO CONTROLLER
+            this.cursos = cursoController.findAllCursos();
 
-        // Itera sobre a lista e adiciona cada curso como uma linha na tabela
-        for (Curso curso : this.cursos) {
-            String estado = curso.isAtivo() ? "Ativo" : "Inativo";
-            modelo.addRow(new Object[]{
-                curso.getNome(),
-                curso.getDescricao(),
-                estado
-            });
+            for (Curso curso : this.cursos) {
+                String estado = curso.isAtivo() ? "Ativo" : "Inativo";
+                modelo.addRow(new Object[]{
+                    curso.getNome(),
+                    curso.getDescricao(),
+                    estado
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Erro ao carregar dados da tabela: \n" + e.getMessage(), 
+                "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
@@ -226,7 +232,6 @@ public class CursoListar extends javax.swing.JFrame {
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         // TODO add your handling code here:
         int linhaSelecionada = tblCursos.getSelectedRow();
-
         if (linhaSelecionada == -1) {
             JOptionPane.showMessageDialog(this, "Por favor, selecione um curso para excluir.");
             return;
@@ -235,19 +240,19 @@ public class CursoListar extends javax.swing.JFrame {
         int indiceReal = tblCursos.convertRowIndexToModel(linhaSelecionada);
         Curso cursoParaExcluir = this.cursos.get(indiceReal);
 
-        int resposta = JOptionPane.showConfirmDialog(
-                this,
-                "Deseja realmente excluir o curso '" + cursoParaExcluir.getNome() + "'?",
-                "Confirmar Exclusão",
-                JOptionPane.YES_NO_OPTION);
+        int resposta = JOptionPane.showConfirmDialog(this, 
+            "Deseja realmente excluir o curso '" + cursoParaExcluir.getNome() + "'?", 
+            "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 
         if (resposta == JOptionPane.YES_OPTION) {
             try {
-                cursoDao.delete(cursoParaExcluir);
+                // CHAMADA CORRIGIDA: USANDO O CONTROLLER PARA DELETAR
+                cursoController.deleteCurso(cursoParaExcluir);
+                
                 JOptionPane.showMessageDialog(this, "Curso excluído com sucesso!");
-                this.carregarTabela(); // Recarrega a tabela para mostrar o resultado
+                this.carregarTabela(); // Recarrega a tabela
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Erro ao excluir o curso.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Erro ao excluir o curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         }
