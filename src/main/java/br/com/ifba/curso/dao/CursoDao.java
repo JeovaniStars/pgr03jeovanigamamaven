@@ -5,6 +5,11 @@ import br.com.ifba.curso.entity.Curso;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
+/**
+ *
+ * @author Bruno
+ */
+
 public class CursoDao extends GenericDao<Curso, Long> implements CursoIDao {
 
     public CursoDao() {

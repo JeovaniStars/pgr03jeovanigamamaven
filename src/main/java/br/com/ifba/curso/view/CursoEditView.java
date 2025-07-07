@@ -18,15 +18,12 @@ public class CursoEditView extends javax.swing.JFrame {
     private final CursoIController cursoController;
     private final CursoListar telaPrincipal;
     private final Curso curso;
-    /**
-     * Creates new form CursoEditView
-     */
+    
     public CursoEditView(CursoListar telaPrincipal, Curso curso) {
         initComponents();
         this.telaPrincipal = telaPrincipal;
         this.curso = curso;
         
-        // 3. INICIALIZAÇÃO CORRIGIDA
         this.cursoController = new CursoController();
         
         this.setLocationRelativeTo(null);
@@ -106,13 +103,12 @@ public class CursoEditView extends javax.swing.JFrame {
             this.curso.setNome(txtNome.getText());
             this.curso.setDescricao(txtDescricao.getText());
             this.curso.setAtivo(cbxEstado.getSelectedItem().toString().equals("Ativo"));
-            
-            // 4. CHAMADA CORRIGIDA: USANDO O CONTROLLER PARA ATUALIZAR
+           
             cursoController.updateCurso(this.curso);
             
             JOptionPane.showMessageDialog(this, "Curso atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             
-            this.telaPrincipal.carregarTabela();
+            this.telaPrincipal.carregarTabelaCompleta();
             this.dispose();
 
         } catch (Exception e) {

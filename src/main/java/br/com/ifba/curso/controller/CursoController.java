@@ -5,9 +5,13 @@ import br.com.ifba.curso.service.CursoService;
 import br.com.ifba.curso.service.CursoIService;
 import java.util.List;
 
+/**
+ *
+ * @author Bruno
+ */
+
 public class CursoController implements CursoIController {
     
-    // O Controller conversa com o Service
     private final CursoIService cursoService = new CursoService();
 
     @Override

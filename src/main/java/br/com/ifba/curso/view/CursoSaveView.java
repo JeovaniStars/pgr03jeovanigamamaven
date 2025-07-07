@@ -24,7 +24,6 @@ public class CursoSaveView extends javax.swing.JFrame {
         this.telaPrincipal = telaPrincipal;
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
-        // 3. INICIALIZAÇÃO CORRIGIDA
         this.cursoController = new CursoController();
         
         // Limpa os campos iniciais para um novo cadastro
@@ -111,7 +110,7 @@ public class CursoSaveView extends javax.swing.JFrame {
             
             JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             
-            this.telaPrincipal.carregarTabela();
+            this.telaPrincipal.carregarTabelaCompleta();
             this.dispose();
 
         } catch (Exception e) {
@@ -120,19 +119,6 @@ public class CursoSaveView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    // O método main deve ser comentado ou removido para evitar erros.
-    /*
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                // new CursoSaveView().setVisible(true); // Esta chamada daria erro
-            }
-        });
-    }
-    */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
