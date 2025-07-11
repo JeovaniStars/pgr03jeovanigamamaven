@@ -1,4 +1,3 @@
-// Pacote: br.com.ifba.infrastructure.util
 package br.com.ifba.infrastructure.util;
 
 import jakarta.persistence.EntityManager;
@@ -7,26 +6,28 @@ import jakarta.persistence.Persistence;
 
 public class JPAUtil {
 
-    private static final String PERSISTENCE_UNIT_NAME = "meuPU"; 
-    private static EntityManagerFactory factory;
+    // A EntityManagerFactory é um objeto pesado e caro.
+    // Devemos criar apenas UMA instância para toda a aplicação.
+    private static final EntityManagerFactory FACTORY =
+            Persistence.createEntityManagerFactory("meuPU"); // O nome "meuPU" deve ser o mesmo do seu persistence.xml
 
-    // Garante que a factory seja criada apenas uma vez
-    public static EntityManagerFactory getEntityManagerFactory() {
-        if (factory == null) {
-            factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-        }
-        return factory;
-    }
-
-    // Método para obter um EntityManager
+    /**
+     * Retorna uma instância de EntityManager.
+     * Lembre-se que cada EntityManager é de curta duração e deve ser fechado
+     * na camada de serviço após o uso.
+     * @return EntityManager
+     */
     public static EntityManager getEntityManager() {
-        return getEntityManagerFactory().createEntityManager();
+        return FACTORY.createEntityManager();
     }
 
-    // Método para fechar a factory quando a aplicação terminar
+    /**
+     * Fecha a factory de EntityManagers.
+     * Este método deve ser chamado apenas uma vez, quando a aplicação for encerrada.
+     */
     public static void shutdown() {
-        if (factory != null) {
-            factory.close();
+        if (FACTORY != null && FACTORY.isOpen()) {
+            FACTORY.close();
         }
     }
 }
