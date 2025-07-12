@@ -4,7 +4,6 @@
  */
 package br.com.ifba.curso.view;
 
-import br.com.ifba.curso.controller.CursoController;
 import br.com.ifba.curso.controller.CursoIController;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
@@ -15,16 +14,16 @@ import javax.swing.JOptionPane;
  */
 public class CursoEditView extends javax.swing.JFrame {
     
-    private final CursoIController cursoController;
+    private final CursoIController cursoController; 
     private final CursoListar telaPrincipal;
     private final Curso curso;
     
-    public CursoEditView(CursoListar telaPrincipal, Curso curso) {
+    public CursoEditView(CursoListar telaPrincipal, Curso curso, CursoIController cursoController) {
         initComponents();
         this.telaPrincipal = telaPrincipal;
         this.curso = curso;
         
-        this.cursoController = new CursoController();
+        this.cursoController = cursoController; 
         
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
