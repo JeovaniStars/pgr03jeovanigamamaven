@@ -19,15 +19,19 @@ public class CursoEditView extends javax.swing.JFrame {
     private final Curso curso;
     
     public CursoEditView(CursoListar telaPrincipal, Curso curso, CursoIController cursoController) {
+        // Inicializa os componentes visuais da tela
         initComponents();
         this.telaPrincipal = telaPrincipal;
         this.curso = curso;
         
         this.cursoController = cursoController; 
         
+        // Centraliza a janela na tela
         this.setLocationRelativeTo(null);
+        // Define a operação padrão ao fechar a janela (apenas fecha esta janela)
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
+        // Preenche os campos do formulário com os dados do curso
         this.preencheCampos();
     }
     
@@ -98,20 +102,27 @@ public class CursoEditView extends javax.swing.JFrame {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
         try {
-        // Pega os dados da tela e atualiza o objeto 'curso'
+            // Pega os dados da tela e atualiza o objeto 'curso'.
             this.curso.setNome(txtNome.getText());
             this.curso.setDescricao(txtDescricao.getText());
+            // Verifica a seleção do ComboBox e atualiza o estado do curso.
             this.curso.setAtivo(cbxEstado.getSelectedItem().toString().equals("Ativo"));
-           
+            
+            // Chama o controlador para persistir a atualização no banco de dados.
             cursoController.updateCurso(this.curso);
             
+            // Exibe uma mensagem de sucesso para o usuário.
             JOptionPane.showMessageDialog(this, "Curso atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             
+            // Atualiza a tabela na tela principal para refletir a alteração.
             this.telaPrincipal.carregarTabelaCompleta();
+            // Fecha a janela de edição.
             this.dispose();
 
         } catch (Exception e) {
+            // Em caso de erro, exibe uma mensagem de erro.
             JOptionPane.showMessageDialog(this, "Erro ao atualizar o curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            // Imprime o rastreamento do erro no console para depuração.
             e.printStackTrace();
         }
     }//GEN-LAST:event_btnSalvarActionPerformed

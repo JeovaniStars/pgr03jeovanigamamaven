@@ -8,20 +8,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service // 1. Marca a classe como um Bean de Serviço para o Spring
+@Service 
 public class CursoService implements CursoIService {
 
     private static final String NOME_OBRIGATORIO = "O campo 'Nome' é obrigatório.";
     private static final String CURSO_NULL = "O objeto Curso não pode ser nulo.";
     private static final String ID_OBRIGATORIO_UPDATE = "Curso não existente. O ID é obrigatório para atualização.";
 
-    @Autowired // 2. Injeta a dependência do repositório automaticamente
+    @Autowired 
     private CursoRepository cursoRepository;
 
     @Override
-    @Transactional // 3. O Spring gerencia a transação (begin, commit, rollback)
+    @Transactional 
     public Curso saveCurso(Curso curso) {
-        // A lógica de validação de negócio permanece a mesma
         if (curso == null) {
             throw new IllegalArgumentException(CURSO_NULL);
         }
@@ -29,7 +28,6 @@ public class CursoService implements CursoIService {
             throw new IllegalArgumentException(NOME_OBRIGATORIO);
         }
 
-        // A complexidade da transação desaparece. Apenas delegamos ao repositório.
         return cursoRepository.save(curso);
     }
 
@@ -46,7 +44,6 @@ public class CursoService implements CursoIService {
             throw new IllegalArgumentException(NOME_OBRIGATORIO);
         }
         
-        // O método save() do Spring Data JPA serve tanto para salvar quanto para atualizar.
         return cursoRepository.save(curso);
     }
 
@@ -60,7 +57,7 @@ public class CursoService implements CursoIService {
     }
 
     @Override
-    @Transactional(readOnly = true) // Transação apenas de leitura é mais otimizada
+    @Transactional(readOnly = true) 
     public List<Curso> findAllCursos() {
         return cursoRepository.findAll();
     }
@@ -68,9 +65,6 @@ public class CursoService implements CursoIService {
     @Override
     @Transactional(readOnly = true)
     public List<Curso> findByNome(String nome) {
-        // Aqui você implementaria a busca no seu CursoRepository
-        // Exemplo: return cursoRepository.findByNomeContainingIgnoreCase(nome);
-        // Por enquanto, vamos deixar um placeholder:
         throw new UnsupportedOperationException("Método de busca por nome não implementado no repositório.");
     }
 }

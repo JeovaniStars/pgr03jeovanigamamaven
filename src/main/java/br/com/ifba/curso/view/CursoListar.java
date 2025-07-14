@@ -28,8 +28,10 @@ public class CursoListar extends javax.swing.JFrame {
     
     public CursoListar(CursoIController cursoController) {
         initComponents();
+        // Centraliza a janela na tela.
         this.setLocationRelativeTo(null);
         this.cursoController = cursoController; 
+        // Realiza as configurações iniciais da tela.
         this.configurarTela();
     }
     
@@ -56,9 +58,7 @@ public class CursoListar extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Carrega a lista completa de cursos do banco de dados e exibe na tela.
-     */
+    // Carrega a lista completa de cursos do banco de dados e exibe na tela.
     public void carregarTabelaCompleta() {
         try {
             List<Curso> todosCursos = cursoController.findAllCursos();
@@ -71,6 +71,7 @@ public class CursoListar extends javax.swing.JFrame {
         }
     }
 
+    // Configura um listener para a seleção de linhas na tabela (Para selecionar excluir ou editar)
     private void configurarSelecaoTabela() {
         tblCursos.getSelectionModel().addListSelectionListener(e -> {
             boolean linhaSelecionada = tblCursos.getSelectedRow() != -1;
@@ -79,8 +80,11 @@ public class CursoListar extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Configura um listener no campo de busca para filtrar os resultados
+     * da tabela dinamicamente conforme o usuário digita.
+     */
     private void configurarBusca() {
-        // O RowSorter não é mais necessário para o filtro no banco, mas o listener sim.
         txtBusca.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e) { filtrar(); }
             @Override public void removeUpdate(DocumentEvent e) { filtrar(); }
@@ -88,9 +92,7 @@ public class CursoListar extends javax.swing.JFrame {
         });
     }
 
-    /**
-     * MÉTODO FILTRAR ATUALIZADO: Agora busca no banco de dados.
-     */
+    // Filtra os cursos exibidos na tabela com base no texto digitado no campo de busca (Diretamente com o banco de Dados)
     private void filtrar() {
         String textoBusca = txtBusca.getText();
         try {
@@ -232,19 +234,22 @@ public class CursoListar extends javax.swing.JFrame {
             return;
         }
 
+        // Converte o índice da linha da visão para o índice do modelo, caso haja ordenação.
         int indiceReal = tblCursos.convertRowIndexToModel(linhaSelecionada);
         Curso cursoParaExcluir = this.cursos.get(indiceReal);
 
+        // Pede confirmação do usuário antes de excluir.
         int resposta = JOptionPane.showConfirmDialog(this, 
             "Deseja realmente excluir o curso '" + cursoParaExcluir.getNome() + "'?", 
             "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 
         if (resposta == JOptionPane.YES_OPTION) {
             try {
-                // CHAMADA CORRIGIDA: USANDO O CONTROLLER PARA DELETAR
+                // Chama o controlador para deletar o curso.
                 cursoController.deleteCurso(cursoParaExcluir);
                 
                 JOptionPane.showMessageDialog(this, "Curso excluído com sucesso!");
+                // Recarrega a tabela para refletir a exclusão.
                 this.carregarTabelaCompleta(); 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Erro ao excluir o curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -263,8 +268,9 @@ public class CursoListar extends javax.swing.JFrame {
         int indiceReal = tblCursos.convertRowIndexToModel(linhaSelecionada);
         Curso cursoParaEditar = this.cursos.get(indiceReal);
 
-        // 2. Passamos o controller para a próxima tela.
+        // Abre a tela de edição, passando a tela atual, o curso e o controlador.
         new CursoEditView(this, cursoParaEditar, this.cursoController).setVisible(true);
+    
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed

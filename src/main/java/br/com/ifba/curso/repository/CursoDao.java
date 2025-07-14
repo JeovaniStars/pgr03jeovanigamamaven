@@ -2,20 +2,17 @@ package br.com.ifba.curso.repository;
 
 import br.com.ifba.curso.entity.Curso;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext; // Anotação para injetar o EntityManager
+import jakarta.persistence.PersistenceContext; 
 import jakarta.persistence.TypedQuery;
 import java.util.List;
-import org.springframework.stereotype.Repository; // Anotação do Spring
+import org.springframework.stereotype.Repository; 
 
-@Repository // 1. Marca a classe como um Bean da camada de repositório
+@Repository 
 public class CursoDao implements CursoIDao {
 
-    // 2. O Spring vai injetar o EntityManager que ele gerencia
     @PersistenceContext
     private EntityManager entityManager;
     
-    // O construtor vazio não é mais estritamente necessário se não houver lógica nele,
-    // mas pode ser mantido. A chamada super(Curso.class) era do seu GenericDao.
     public CursoDao() {
     }
 
@@ -31,7 +28,6 @@ public class CursoDao implements CursoIDao {
 
     @Override
     public void delete(Curso curso) {
-        // Para deletar, o objeto precisa estar no estado "managed"
         this.entityManager.remove(this.entityManager.contains(curso) ? curso : this.entityManager.merge(curso));
     }
 

@@ -7,7 +7,7 @@ import jakarta.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.List;
 
-// br.com.ifba.infrastructure.dao.GenericDao
+
 public abstract class GenericDao<T extends PersistenceEntity, ID extends Serializable> implements GenericIDao<T, ID> {
     
     private final Class<T> entityClass;
@@ -16,7 +16,6 @@ public abstract class GenericDao<T extends PersistenceEntity, ID extends Seriali
         this.entityClass = entityClass;
     }
 
-    // Os métodos agora recebem o EntityManager como parâmetro
     @Override 
     public T save(T entity, EntityManager entityManager) {
         return entityManager.merge(entity);
