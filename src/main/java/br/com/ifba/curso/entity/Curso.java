@@ -13,7 +13,7 @@ public class Curso extends PersistenceEntity {
 
     @Column(name = "nome", nullable = false, length = 150)
     private String nome;
-
+  
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String descricao;
     
