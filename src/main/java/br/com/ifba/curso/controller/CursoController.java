@@ -5,13 +5,12 @@ import br.com.ifba.curso.service.CursoIService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
 /**
  *
  * @author Bruno
  */
 
-@Controller 
+@Controller  
 public class CursoController implements CursoIController {
     
     @Autowired 
